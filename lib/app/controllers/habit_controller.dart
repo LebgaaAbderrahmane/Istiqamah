@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../data/models/habit_log_model.dart';
 import '../data/models/habit_model.dart';
 import '../data/repositories/habit_repository.dart';
 import '../logic/streak_calculator.dart';
+import '../services/hijri_service.dart';
 import '../utils/date_utils.dart';
 
 class HabitController extends GetxController {
@@ -25,11 +27,62 @@ class HabitController extends GetxController {
   Future<void> loadData() async {
     isLoading.value = true;
     try {
+      await _handleRamadanMode();
       habits.value = await _repo.getActiveHabits();
       await _loadTodayLogs();
       await _computeStreaks();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _handleRamadanMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final override = prefs.getBool('ramadanModeOverride');
+    final isRamadan = HijriService().isRamadan(today);
+
+    final shouldShowRamadan = override ?? isRamadan;
+    final allHabits = await _repo.getAllHabits(includeArchived: true);
+    final existingRamadan = allHabits.where((h) => h.name == 'Fasting' || h.name == 'Taraweeh').toList();
+
+    if (shouldShowRamadan) {
+      for (final habit in existingRamadan) {
+        if (habit.isArchived) {
+          await _repo.updateHabit(habit.copyWith(isArchived: false));
+        }
+      }
+      if (!existingRamadan.any((h) => h.name == 'Fasting')) {
+        final maxOrder = allHabits.isEmpty ? 0 : allHabits.map((h) => h.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
+        await _repo.addHabit(HabitModel(
+          id: const Uuid().v4(),
+          name: 'Fasting',
+          icon: 'nightlight',
+          type: 'boolean',
+          targetValue: 1,
+          isCustom: true,
+          sortOrder: maxOrder,
+          createdAt: today,
+        ));
+      }
+      if (!existingRamadan.any((h) => h.name == 'Taraweeh')) {
+        final maxOrder = allHabits.isEmpty ? 0 : allHabits.map((h) => h.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
+        await _repo.addHabit(HabitModel(
+          id: const Uuid().v4(),
+          name: 'Taraweeh',
+          icon: 'mosque',
+          type: 'boolean',
+          targetValue: 1,
+          isCustom: true,
+          sortOrder: maxOrder,
+          createdAt: today,
+        ));
+      }
+    } else {
+      for (final habit in existingRamadan) {
+        if (!habit.isArchived) {
+          await _repo.updateHabit(habit.copyWith(isArchived: true));
+        }
+      }
     }
   }
 

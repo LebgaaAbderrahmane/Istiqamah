@@ -5,10 +5,12 @@ import 'app/controllers/theme_controller.dart';
 import 'app/controllers/settings_controller.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';
+import 'app/services/notification_service.dart';
 import 'app/theme/app_theme.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.instance.init();
   Get.put(ThemeController());
   Get.put(SettingsController());
   runApp(const IstiqamahApp());

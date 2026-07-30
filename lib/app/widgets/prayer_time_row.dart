@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
+import '../theme/app_spacing.dart';
+
+class PrayerTimeRow extends StatelessWidget {
+  final Map<String, String> times;
+
+  const PrayerTimeRow({super.key, required this.times});
+
+  @override
+  Widget build(BuildContext context) {
+    final prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.accent.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.15)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: prayerOrder.map((name) {
+          final time = times[name];
+          final isSunrise = name == 'Sunrise';
+          return _PrayerTimeItem(
+            name: name,
+            time: time ?? '--:--',
+            isMuted: isSunrise,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _PrayerTimeItem extends StatelessWidget {
+  final String name;
+  final String time;
+  final bool isMuted;
+
+  const _PrayerTimeItem({
+    required this.name,
+    required this.time,
+    this.isMuted = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          name == 'Sunrise' ? 'Sun' : name.substring(0, 3),
+          style: AppTextStyles.labelSmall.copyWith(
+            color: isMuted ? AppColors.textHint : AppColors.accent,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          time.substring(0, 5),
+          style: AppTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isMuted ? AppColors.textHint : AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}

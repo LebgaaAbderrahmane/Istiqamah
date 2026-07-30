@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/habit_controller.dart';
+import '../../controllers/prayer_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -9,6 +10,7 @@ import '../../utils/date_utils.dart';
 import '../../utils/constants.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/habit_row.dart';
+import '../../widgets/prayer_time_row.dart';
 import '../../widgets/empty_state_widget.dart';
 
 class TodayView extends GetView<HabitController> {
@@ -23,16 +25,20 @@ class TodayView extends GetView<HabitController> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Obx(() {
+              final pref = settings.calendarPreference.value;
+              final today = DateTime.now();
+              final gregorian = AppDateUtils.formatGregorian(today);
+              final hijri = AppDateUtils.formatHijri(today);
+              return Text(
+                pref == 'hijri' ? hijri : gregorian,
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+              );
+            }),
             Text(
-              AppDateUtils.formatGregorian(DateTime.now()),
-              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+              AppConstants.appName,
+              style: AppTextStyles.titleLarge,
             ),
-            Obx(() => Text(
-                  settings.calendarPreference.value == 'hijri'
-                      ? 'Hijri Date'
-                      : AppConstants.appName,
-                  style: AppTextStyles.titleLarge,
-                )),
           ],
         ),
         actions: [
@@ -63,12 +69,12 @@ class TodayView extends GetView<HabitController> {
           onRefresh: () => controller.loadData(),
           child: ListView.builder(
             padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: 80),
-            itemCount: controller.habits.length + 1,
+            itemCount: controller.habits.length + 3,
             itemBuilder: (context, index) {
-              if (index == 0) {
-                return _buildHeader();
-              }
-              final habit = controller.habits[index - 1];
+              if (index == 0) return _buildHeader();
+              if (index == 1) return _buildPrayerTimesSection();
+              if (index == 2) return const Divider();
+              final habit = controller.habits[index - 3];
               return HabitRow(habit: habit);
             },
           ),
@@ -113,6 +119,15 @@ class TodayView extends GetView<HabitController> {
         ],
       ),
     );
+  }
+
+  Widget _buildPrayerTimesSection() {
+    final prayerController = Get.find<PrayerController>();
+    return Obx(() {
+      final times = prayerController.prayerTimes.value;
+      if (times == null) return const SizedBox.shrink();
+      return PrayerTimeRow(times: times);
+    });
   }
 
   String _getMessage(int completed, int total) {

@@ -1,6 +1,9 @@
 import 'package:intl/intl.dart';
+import '../services/hijri_service.dart';
 
 class AppDateUtils {
+  static final _hijriService = HijriService();
+
   static String formatGregorian(DateTime date) {
     return DateFormat('MMM d, yyyy').format(date);
   }
@@ -11,6 +14,20 @@ class AppDateUtils {
 
   static String formatMonthYear(DateTime date) {
     return DateFormat('MMMM yyyy').format(date);
+  }
+
+  static String formatHijri(DateTime date) {
+    return _hijriService.formatHijri(date);
+  }
+
+  static String formatHijriMonthYear(DateTime date) {
+    return _hijriService.formatHijriShort(date);
+  }
+
+  static String formatBothDates(DateTime date) {
+    final g = formatGregorian(date);
+    final h = formatHijri(date);
+    return '$g  ·  $h';
   }
 
   static String dayOfWeekAbbr(DateTime date) {

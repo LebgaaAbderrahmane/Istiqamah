@@ -17,9 +17,19 @@ class CalendarView extends GetView<CalendarController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(
-              AppDateUtils.formatMonthYear(controller.currentMonth.value),
-            )),
+        title: Obx(() {
+          final m = controller.currentMonth.value;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppDateUtils.formatMonthYear(m)),
+              Text(
+                AppDateUtils.formatHijriMonthYear(m),
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+              ),
+            ],
+          );
+        }),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
