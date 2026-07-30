@@ -18,6 +18,14 @@ class HabitRepository {
 
   Future<void> updateHabit(HabitModel habit) => _db.updateHabit(habit);
 
+  Future<void> reorderHabits(List<String> habitIds) async {
+    final pairs = habitIds.asMap().entries.map((e) => {
+      'id': e.value,
+      'sortOrder': e.key,
+    }).toList();
+    await _db.updateHabitOrder(pairs);
+  }
+
   Future<void> archiveHabit(String id) async {
     final habit = await _db.getHabitById(id);
     if (habit != null) {

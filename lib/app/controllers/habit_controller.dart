@@ -146,6 +146,15 @@ class HabitController extends GetxController {
     await loadData();
   }
 
+  Future<void> reorderHabits(int oldIndex, int newIndex) async {
+    if (newIndex > oldIndex) newIndex--;
+    final updated = <HabitModel>[...habits];
+    final item = updated.removeAt(oldIndex);
+    updated.insert(newIndex, item);
+    habits.value = updated;
+    await _repo.reorderHabits(updated.map((h) => h.id).toList());
+  }
+
   Future<void> archiveHabit(String id) async {
     await _repo.archiveHabit(id);
     await loadData();

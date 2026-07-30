@@ -86,6 +86,20 @@ class DatabaseService {
     await db.update('habit', habit.toMap(), where: 'id = ?', whereArgs: [habit.id]);
   }
 
+  Future<void> updateHabitOrder(List<Map<String, dynamic>> idOrderPairs) async {
+    final db = await database;
+    final batch = db.batch();
+    for (final pair in idOrderPairs) {
+      batch.update(
+        'habit',
+        {'sortOrder': pair['sortOrder']},
+        where: 'id = ?',
+        whereArgs: [pair['id']],
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
   Future<void> deleteHabit(String id) async {
     final db = await database;
     await db.delete('habit_log', where: 'habitId = ?', whereArgs: [id]);
