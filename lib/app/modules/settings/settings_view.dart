@@ -34,15 +34,16 @@ class SettingsView extends GetView<SettingsController> {
                 ListTile(
                   leading: const Icon(Icons.palette_outlined),
                   title: Text(AppStrings.theme.tr),
-                  trailing: Obx(() => SegmentedButton<ThemeMode>(
-                        segments: [
-                          ButtonSegment(value: ThemeMode.light, label: Text(AppStrings.lightMode.tr)),
-                          ButtonSegment(value: ThemeMode.dark, label: Text(AppStrings.darkMode.tr)),
-                          ButtonSegment(value: ThemeMode.system, label: Text(AppStrings.systemMode.tr)),
+                  trailing: Obx(() => DropdownButton<ThemeMode>(
+                        value: themeController.themeMode.value,
+                        underline: const SizedBox(),
+                        items: [
+                          DropdownMenuItem(value: ThemeMode.light, child: Text(AppStrings.lightMode.tr)),
+                          DropdownMenuItem(value: ThemeMode.dark, child: Text(AppStrings.darkMode.tr)),
+                          DropdownMenuItem(value: ThemeMode.system, child: Text(AppStrings.systemMode.tr)),
                         ],
-                        selected: {themeController.themeMode.value},
-                        onSelectionChanged: (set) {
-                          themeController.setThemeMode(set.first);
+                        onChanged: (v) {
+                          if (v != null) themeController.setThemeMode(v);
                         },
                       )),
                 ),
