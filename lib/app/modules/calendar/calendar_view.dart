@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/calendar_controller.dart';
+import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
@@ -75,7 +76,20 @@ class CalendarView extends GetView<CalendarController> {
   }
 
   Widget _buildWeekdayHeaders() {
-    final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final isArabic = Get.locale?.languageCode == 'ar';
+    final weekdays = isArabic
+        ? [
+            AppStrings.mon.tr,
+            AppStrings.tue.tr,
+            AppStrings.wed.tr,
+            AppStrings.thu.tr,
+            AppStrings.fri.tr,
+            AppStrings.sat.tr,
+            AppStrings.sun.tr,
+          ]
+        : [
+            'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+          ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Row(
@@ -96,9 +110,9 @@ class CalendarView extends GetView<CalendarController> {
   Widget _buildGrid() {
     final completions = controller.completions;
     if (completions.isEmpty) {
-      return const EmptyStateWidget(
+      return EmptyStateWidget(
         icon: Icons.calendar_view_month,
-        message: 'No data for this month.',
+        message: AppStrings.noDataForMonth.tr,
       );
     }
 

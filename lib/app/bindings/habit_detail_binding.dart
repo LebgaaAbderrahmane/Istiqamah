@@ -4,6 +4,8 @@ import '../controllers/habit_detail_controller.dart';
 class HabitDetailBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HabitDetailController>(() => HabitDetailController());
+    if (!Get.isRegistered<HabitDetailController>()) {
+      Get.put<HabitDetailController>(HabitDetailController());
+    }
   }
 }

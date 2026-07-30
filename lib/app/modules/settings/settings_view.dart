@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/settings_controller.dart';
 import '../../controllers/theme_controller.dart';
+import '../../controllers/locale_controller.dart';
+import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
@@ -12,10 +14,11 @@ class SettingsView extends GetView<SettingsController> {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final localeController = Get.find<LocaleController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppStrings.settings.tr),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
@@ -24,19 +27,18 @@ class SettingsView extends GetView<SettingsController> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          _buildSectionHeader('Appearance'),
+          _buildSectionHeader(AppStrings.appearance.tr),
           Card(
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.palette_outlined),
-                  title: const Text('Theme'),
+                  title: Text(AppStrings.theme.tr),
                   trailing: Obx(() => SegmentedButton<ThemeMode>(
-                        segments: const [
-                          ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                          ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
-                          ButtonSegment(
-                              value: ThemeMode.system, label: Text('System')),
+                        segments: [
+                          ButtonSegment(value: ThemeMode.light, label: Text(AppStrings.lightMode.tr)),
+                          ButtonSegment(value: ThemeMode.dark, label: Text(AppStrings.darkMode.tr)),
+                          ButtonSegment(value: ThemeMode.system, label: Text(AppStrings.systemMode.tr)),
                         ],
                         selected: {themeController.themeMode.value},
                         onSelectionChanged: (set) {
@@ -44,27 +46,45 @@ class SettingsView extends GetView<SettingsController> {
                         },
                       )),
                 ),
+                ListTile(
+                  leading: const Icon(Icons.language),
+                  title: Text(AppStrings.language.tr),
+                  trailing: Obx(() => DropdownButton<Locale>(
+                        value: localeController.locale.value,
+                        underline: const SizedBox(),
+                        items: const [
+                          DropdownMenuItem(
+                            value: Locale('en', 'US'),
+                            child: Text('English'),
+                          ),
+                          DropdownMenuItem(
+                            value: Locale('ar', 'AE'),
+                            child: Text('العربية'),
+                          ),
+                        ],
+                        onChanged: (v) {
+                          if (v != null) localeController.setLocale(v);
+                        },
+                      )),
+                ),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader('Calendar'),
+          _buildSectionHeader(AppStrings.calendar.tr),
           Card(
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
-                  title: const Text('Calendar preference'),
+                  title: Text(AppStrings.calendarPref.tr),
                   trailing: Obx(() => DropdownButton<String>(
                         value: controller.calendarPreference.value,
                         underline: const SizedBox(),
-                        items: const [
-                          DropdownMenuItem(
-                              value: 'gregorian', child: Text('Gregorian')),
-                          DropdownMenuItem(
-                              value: 'hijri', child: Text('Hijri')),
-                          DropdownMenuItem(
-                              value: 'both', child: Text('Both')),
+                        items: [
+                          DropdownMenuItem(value: 'gregorian', child: Text(AppStrings.gregorian.tr)),
+                          DropdownMenuItem(value: 'hijri', child: Text(AppStrings.hijri.tr)),
+                          DropdownMenuItem(value: 'both', child: Text(AppStrings.both.tr)),
                         ],
                         onChanged: (v) {
                           if (v != null) controller.setCalendarPreference(v);
@@ -75,13 +95,13 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader('Notifications'),
+          _buildSectionHeader(AppStrings.notifications.tr),
           Card(
             child: Column(
               children: [
                 Obx(() => SwitchListTile(
-                      title: const Text('Prayer time notifications'),
-                      subtitle: const Text('Get reminded before each prayer'),
+                      title: Text(AppStrings.prayerNotifications.tr),
+                      subtitle: Text(AppStrings.notificationSubtitle.tr),
                       value: controller.isNotificationsEnabled.value,
                       onChanged: (_) => controller.toggleNotifications(),
                     )),
@@ -89,14 +109,14 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader('Location'),
+          _buildSectionHeader(AppStrings.location.tr),
           Card(
             child: Column(
               children: [
                 Obx(() => ListTile(
                       leading: const Icon(Icons.location_on_outlined),
-                      title: const Text('City'),
-                      subtitle: Text(controller.cityName.value ?? 'Not set'),
+                      title: Text(AppStrings.city.tr),
+                      subtitle: Text(controller.cityName.value ?? AppStrings.notSet.tr),
                       trailing: const Icon(Icons.edit),
                       onTap: () => _showCityInput(),
                     )),
@@ -104,13 +124,13 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader('Ramadan'),
+          _buildSectionHeader(AppStrings.ramadan.tr),
           Card(
             child: Column(
               children: [
                 Obx(() => SwitchListTile(
-                      title: const Text('Ramadan mode'),
-                      subtitle: const Text('Show fasting & taraweeh tracking'),
+                      title: Text(AppStrings.ramadanMode.tr),
+                      subtitle: Text(AppStrings.ramadanSubtitle.tr),
                       value: controller.ramadanModeOverride.value ?? false,
                       onChanged: (v) => controller.setRamadanOverride(v),
                     )),
@@ -133,7 +153,6 @@ class SettingsView extends GetView<SettingsController> {
   }
 
   void _showCityInput() {
-    final controller = this.controller;
     final ctrl = TextEditingController(text: controller.cityName.value ?? '');
     Get.bottomSheet(
       Container(
@@ -152,13 +171,13 @@ class SettingsView extends GetView<SettingsController> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Set City', style: AppTextStyles.titleLarge),
+            Text(AppStrings.setCity.tr, style: AppTextStyles.titleLarge),
             const SizedBox(height: AppSpacing.md),
             TextField(
               controller: ctrl,
-              decoration: const InputDecoration(
-                labelText: 'City name',
-                hintText: 'e.g. Mecca',
+              decoration: InputDecoration(
+                labelText: AppStrings.cityName.tr,
+                hintText: AppStrings.cityHint.tr,
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -171,7 +190,7 @@ class SettingsView extends GetView<SettingsController> {
                   }
                   Get.back();
                 },
-                child: const Text('Save'),
+                child: Text(AppStrings.save.tr),
               ),
             ),
           ],

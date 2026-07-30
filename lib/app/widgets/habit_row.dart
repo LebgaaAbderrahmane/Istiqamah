@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/models/habit_model.dart';
 import '../controllers/habit_controller.dart';
+import '../l10n/locale_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_spacing.dart';
@@ -154,7 +155,7 @@ class HabitRow extends StatelessWidget {
               style: AppTextStyles.titleLarge,
             ),
             Text(
-              'Target: ${habit.targetValue} ${habit.unit ?? ''}',
+              '${AppStrings.dailyTarget.tr}: ${habit.targetValue} ${habit.unit ?? ''}',
               style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -190,7 +191,7 @@ class HabitRow extends StatelessWidget {
                   controller.updateCountHabit(habit.id, value.value);
                   Get.back();
                 },
-                child: const Text('Save'),
+                child: Text(AppStrings.save.tr),
               ),
             ),
           ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../l10n/locale_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_spacing.dart';
@@ -11,6 +13,14 @@ class PrayerTimeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    final nameMap = {
+      'Fajr': AppStrings.fajr.tr,
+      'Sunrise': AppStrings.sunrise.tr,
+      'Dhuhr': AppStrings.dhuhr.tr,
+      'Asr': AppStrings.asr.tr,
+      'Maghrib': AppStrings.maghrib.tr,
+      'Isha': AppStrings.isha.tr,
+    };
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
@@ -26,7 +36,7 @@ class PrayerTimeRow extends StatelessWidget {
           final time = times[name];
           final isSunrise = name == 'Sunrise';
           return _PrayerTimeItem(
-            name: name,
+            name: nameMap[name] ?? name,
             time: time ?? '--:--',
             isMuted: isSunrise,
           );
@@ -53,7 +63,7 @@ class _PrayerTimeItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          name == 'Sunrise' ? 'Sun' : name.substring(0, 3),
+          name,
           style: AppTextStyles.labelSmall.copyWith(
             color: isMuted ? AppColors.textHint : AppColors.accent,
           ),

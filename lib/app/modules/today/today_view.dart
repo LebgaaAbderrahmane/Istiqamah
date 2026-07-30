@@ -4,11 +4,13 @@ import '../../data/models/habit_model.dart';
 import '../../controllers/habit_controller.dart';
 import '../../controllers/prayer_controller.dart';
 import '../../controllers/settings_controller.dart';
+import '../../controllers/locale_controller.dart';
+import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
 import '../../utils/date_utils.dart';
-import '../../utils/constants.dart';
+
 import '../../routes/app_routes.dart';
 import '../../widgets/habit_row.dart';
 import '../../widgets/prayer_time_row.dart';
@@ -20,6 +22,7 @@ class TodayView extends GetView<HabitController> {
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<SettingsController>();
+    final isArabic = Get.find<LocaleController>().isRtl;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +40,7 @@ class TodayView extends GetView<HabitController> {
               );
             }),
             Text(
-              AppConstants.appName,
+              AppStrings.appName.tr,
               style: AppTextStyles.titleLarge,
             ),
           ],
@@ -48,7 +51,7 @@ class TodayView extends GetView<HabitController> {
             onPressed: () => Get.toNamed(AppRoutes.calendar),
           ),
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: Icon(isArabic ? Icons.arrow_back_ios : Icons.settings_outlined),
             onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
         ],
@@ -59,10 +62,10 @@ class TodayView extends GetView<HabitController> {
         }
 
         if (controller.habits.isEmpty) {
-          return const EmptyStateWidget(
+          return EmptyStateWidget(
             icon: Icons.checklist,
-            message: 'Your journey starts today.',
-            subtitle: 'Add your first habit to begin tracking.',
+            message: AppStrings.yourJourneyStarts.tr,
+            subtitle: AppStrings.addFirstHabit.tr,
           );
         }
 
@@ -92,7 +95,7 @@ class TodayView extends GetView<HabitController> {
         backgroundColor: AppColors.accent,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: const Text('Add Habit'),
+        label: Text(AppStrings.addHabit.tr),
       ),
     );
   }
@@ -122,21 +125,21 @@ class TodayView extends GetView<HabitController> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Text('Add Custom Habit', style: AppTextStyles.titleLarge),
+              Text(AppStrings.addCustomHabit.tr, style: AppTextStyles.titleLarge),
               const SizedBox(height: AppSpacing.md),
               TextField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Habit name',
+                decoration: InputDecoration(
+                  labelText: AppStrings.habitName.tr,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Obx(() => DropdownButtonFormField<String>(
                     initialValue: selectedType.value,
-                    decoration: const InputDecoration(labelText: 'Type'),
-                    items: const [
-                      DropdownMenuItem(value: 'boolean', child: Text('Checkbox')),
-                      DropdownMenuItem(value: 'count', child: Text('Count')),
+                    decoration: InputDecoration(labelText: AppStrings.type.tr),
+                    items: [
+                      DropdownMenuItem(value: 'boolean', child: Text(AppStrings.checkbox.tr)),
+                      DropdownMenuItem(value: 'count', child: Text(AppStrings.count.tr)),
                     ],
                     onChanged: (v) {
                       if (v != null) selectedType.value = v;
@@ -146,7 +149,7 @@ class TodayView extends GetView<HabitController> {
               if (selectedType.value == 'count')
                 TextField(
                   controller: targetCtrl,
-                  decoration: const InputDecoration(labelText: 'Daily target'),
+                  decoration: InputDecoration(labelText: AppStrings.dailyTarget.tr),
                   keyboardType: TextInputType.number,
                 ),
               const SizedBox(height: AppSpacing.lg),
@@ -163,7 +166,7 @@ class TodayView extends GetView<HabitController> {
                     );
                     Get.back();
                   },
-                  child: const Text('Add Habit'),
+                  child: Text(AppStrings.save.tr),
                 ),
               ),
             ],
@@ -186,11 +189,11 @@ class _HeaderSection extends StatelessWidget {
 
     String message;
     if (completed == total && total > 0) {
-      message = 'Masha\'Allah! All habits completed today.';
+      message = AppStrings.allCompleted.tr;
     } else if (completed > 0) {
-      message = 'Keep going — every step counts.';
+      message = AppStrings.keepGoing.tr;
     } else {
-      message = 'Bismillah — let\'s begin today\'s journey.';
+      message = AppStrings.bismillah.tr;
     }
 
     return Padding(
@@ -210,7 +213,7 @@ class _HeaderSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              '$completed / $total',
+              '$completed ${AppStrings.outOf.tr} $total',
               style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent),
             ),
           ),

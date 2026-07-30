@@ -5,7 +5,11 @@ import '../controllers/prayer_controller.dart';
 class TodayBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HabitController>(() => HabitController());
-    Get.lazyPut<PrayerController>(() => PrayerController());
+    if (!Get.isRegistered<HabitController>()) {
+      Get.put<HabitController>(HabitController());
+    }
+    if (!Get.isRegistered<PrayerController>()) {
+      Get.put<PrayerController>(PrayerController());
+    }
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_spacing.dart';
+import '../l10n/locale_strings.dart';
 
 class StreakBadge extends StatelessWidget {
   final int currentStreak;
@@ -37,7 +39,7 @@ class StreakBadge extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             Text(
-              'days',
+              AppStrings.days.tr,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textHint,
               ),

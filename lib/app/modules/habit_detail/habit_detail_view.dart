@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/habit_detail_controller.dart';
+import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../theme/app_spacing.dart';
@@ -17,7 +18,7 @@ class HabitDetailView extends GetView<HabitDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(controller.habit.value?.name ?? 'Habit Detail')),
+        title: Obx(() => Text(controller.habit.value?.name ?? '')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
@@ -29,9 +30,9 @@ class HabitDetailView extends GetView<HabitDetailController> {
         }
         final habit = controller.habit.value;
         if (habit == null) {
-          return const EmptyStateWidget(
+          return EmptyStateWidget(
             icon: Icons.error_outline,
-            message: 'Habit not found.',
+            message: AppStrings.habitNotFound.tr,
           );
         }
         final streak = controller.streak.value;
@@ -64,7 +65,7 @@ class HabitDetailView extends GetView<HabitDetailController> {
               color: AppColors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.check_circle,
               size: 48,
               color: AppColors.accent,
@@ -73,7 +74,7 @@ class HabitDetailView extends GetView<HabitDetailController> {
           const SizedBox(height: AppSpacing.md),
           Text(habit.name, style: AppTextStyles.headlineLarge),
           Text(
-              habit.type == 'count' ? '${habit.targetValue} ${habit.unit ?? ''}' : 'Daily',
+            habit.type == 'count' ? '${habit.targetValue} ${habit.unit ?? ''}' : AppStrings.checkbox.tr,
             style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
           ),
         ],
@@ -85,11 +86,11 @@ class HabitDetailView extends GetView<HabitDetailController> {
     return Row(
       children: [
         Expanded(
-          child: _buildStreakCard('Current Streak', streak.current),
+          child: _buildStreakCard(AppStrings.currentStreak.tr, streak.current),
         ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
-          child: _buildStreakCard('Longest Streak', streak.longest),
+          child: _buildStreakCard(AppStrings.longestStreak.tr, streak.longest),
         ),
       ],
     );
@@ -122,7 +123,7 @@ class HabitDetailView extends GetView<HabitDetailController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('12-Month Overview', style: AppTextStyles.titleMedium),
+        Text(AppStrings.monthOverview.tr, style: AppTextStyles.titleMedium),
         const SizedBox(height: AppSpacing.sm),
         Obx(() {
           if (controller.monthCompletions.isEmpty) {
@@ -151,12 +152,12 @@ class HabitDetailView extends GetView<HabitDetailController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Recent Logs', style: AppTextStyles.titleMedium),
+        Text(AppStrings.recentLogs.tr, style: AppTextStyles.titleMedium),
         const SizedBox(height: AppSpacing.sm),
         Obx(() {
           if (controller.logs.isEmpty) {
             return Text(
-              'No logs yet. Start tracking today!',
+              AppStrings.noLogsYet.tr,
               style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
             );
           }

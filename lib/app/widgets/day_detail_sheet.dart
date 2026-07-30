@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../data/models/habit_log_model.dart';
 import '../data/models/habit_model.dart';
 import '../data/repositories/habit_repository.dart';
 import '../logic/heatmap_aggregator.dart';
+import '../l10n/locale_strings.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_spacing.dart';
@@ -84,14 +86,14 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
-                '${widget.day.completedCount} / ${widget.day.totalActiveHabits} habits completed',
+                '${widget.day.completedCount} ${AppStrings.outOf.tr} ${widget.day.totalActiveHabits} ${AppStrings.habitsCompleted.tr}',
                 style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
               ),
               if (_canEdit)
                 Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.xs),
                   child: Text(
-                    'Tap to edit (${AppConstants.maxEditDaysBack}-day window)',
+                    '${AppStrings.tapToEdit.tr} (${AppStrings.dayWindow.tr})',
                     style: AppTextStyles.labelSmall.copyWith(color: AppColors.gold),
                   ),
                 ),
