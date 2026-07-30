@@ -4,7 +4,6 @@ import '../../data/models/habit_model.dart';
 import '../../controllers/habit_controller.dart';
 import '../../controllers/prayer_controller.dart';
 import '../../controllers/settings_controller.dart';
-import '../../controllers/locale_controller.dart';
 import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -22,8 +21,6 @@ class TodayView extends GetView<HabitController> {
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<SettingsController>();
-    final isArabic = Get.find<LocaleController>().isRtl;
-
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -51,7 +48,7 @@ class TodayView extends GetView<HabitController> {
             onPressed: () => Get.toNamed(AppRoutes.calendar),
           ),
           IconButton(
-            icon: Icon(isArabic ? Icons.arrow_back_ios : Icons.settings_outlined),
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
         ],
