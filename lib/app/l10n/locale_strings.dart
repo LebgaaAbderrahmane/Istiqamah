@@ -2,7 +2,10 @@ abstract class AppStrings {
   static const String appName = 'appName';
   static const String today = 'today';
   static const String calendar = 'calendar';
+  static const String tasks = 'tasks';
   static const String settings = 'settings';
+  static const String archive = 'archive';
+  static const String archiveConfirm = 'archiveConfirm';
   static const String addHabit = 'addHabit';
   static const String habitName = 'habitName';
   static const String type = 'type';

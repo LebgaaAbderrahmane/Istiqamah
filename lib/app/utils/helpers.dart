@@ -5,10 +5,11 @@ import '../theme/app_colors.dart';
 class Helpers {
   static void showSnackbar(String title, String message,
       {bool isError = false}) {
+    final colors = Get.context?.appColors ?? AppColors.light;
     Get.snackbar(
       title,
       message,
-      backgroundColor: isError ? AppColors.error : AppColors.accent,
+      backgroundColor: isError ? colors.error : colors.accent,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
       borderRadius: 12,

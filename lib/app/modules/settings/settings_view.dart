@@ -27,7 +27,7 @@ class SettingsView extends GetView<SettingsController> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          _buildSectionHeader(AppStrings.appearance.tr),
+          _buildSectionHeader(context, AppStrings.appearance.tr),
           Card(
             child: Column(
               children: [
@@ -72,7 +72,7 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader(AppStrings.calendar.tr),
+          _buildSectionHeader(context, AppStrings.calendar.tr),
           Card(
             child: Column(
               children: [
@@ -96,7 +96,7 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader(AppStrings.notifications.tr),
+          _buildSectionHeader(context, AppStrings.notifications.tr),
           Card(
             child: Column(
               children: [
@@ -110,7 +110,7 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader(AppStrings.location.tr),
+          _buildSectionHeader(context, AppStrings.location.tr),
           Card(
             child: Column(
               children: [
@@ -119,13 +119,13 @@ class SettingsView extends GetView<SettingsController> {
                       title: Text(AppStrings.city.tr),
                       subtitle: Text(controller.cityName.value ?? AppStrings.notSet.tr),
                       trailing: const Icon(Icons.edit),
-                      onTap: () => _showCityInput(),
+                      onTap: () => _showCityInput(context),
                     )),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _buildSectionHeader(AppStrings.ramadan.tr),
+          _buildSectionHeader(context, AppStrings.ramadan.tr),
           Card(
             child: Column(
               children: [
@@ -143,17 +143,17 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: Text(
         title,
-        style: AppTextStyles.labelLarge.copyWith(color: AppColors.accent),
+        style: AppTextStyles.labelLarge.copyWith(color: context.appColors.accent),
       ),
     );
   }
 
-  void _showCityInput() {
+  void _showCityInput(BuildContext context) {
     final ctrl = TextEditingController(text: controller.cityName.value ?? '');
     Get.bottomSheet(
       Container(
@@ -166,7 +166,7 @@ class SettingsView extends GetView<SettingsController> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.textHint.withValues(alpha: 0.3),
+                  color: context.appColors.textHint.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

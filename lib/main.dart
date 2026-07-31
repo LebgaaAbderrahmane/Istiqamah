@@ -37,7 +37,7 @@ class IstiqamahApp extends StatelessWidget {
             translations: AppTranslations(),
             locale: lc.locale.value,
             fallbackLocale: const Locale('en', 'US'),
-            initialRoute: AppRoutes.today,
+            initialRoute: AppRoutes.home,
             getPages: AppPages.pages,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

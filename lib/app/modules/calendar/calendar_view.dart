@@ -26,15 +26,11 @@ class CalendarView extends GetView<CalendarController> {
               Text(AppDateUtils.formatMonthYear(m)),
               Text(
                 AppDateUtils.formatHijriMonthYear(m),
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodySmall,
               ),
             ],
           );
         }),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -44,7 +40,7 @@ class CalendarView extends GetView<CalendarController> {
         return Column(
           children: [
             _buildMonthNavigator(),
-            _buildWeekdayHeaders(),
+            _buildWeekdayHeaders(context),
             Expanded(child: _buildGrid()),
           ],
         );
@@ -75,7 +71,7 @@ class CalendarView extends GetView<CalendarController> {
     );
   }
 
-  Widget _buildWeekdayHeaders() {
+  Widget _buildWeekdayHeaders(BuildContext context) {
     final isArabic = Get.locale?.languageCode == 'ar';
     final weekdays = isArabic
         ? [
@@ -98,7 +94,7 @@ class CalendarView extends GetView<CalendarController> {
             child: Center(
               child: Text(
                 d,
-                style: AppTextStyles.labelSmall.copyWith(color: AppColors.textHint),
+                style: AppTextStyles.labelSmall.copyWith(color: context.appColors.textHint),
               ),
             ),
           );

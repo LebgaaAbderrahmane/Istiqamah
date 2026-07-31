@@ -12,6 +12,7 @@ class PrayerTimeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
     final nameMap = {
       'Fajr': AppStrings.fajr.tr,
@@ -26,9 +27,9 @@ class PrayerTimeRow extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.05),
+        color: colors.accent.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.15)),
+        border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -59,13 +60,14 @@ class _PrayerTimeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           name,
           style: AppTextStyles.labelSmall.copyWith(
-            color: isMuted ? AppColors.textHint : AppColors.accent,
+            color: isMuted ? colors.textHint : colors.accent,
           ),
         ),
         const SizedBox(height: 2),
@@ -73,7 +75,7 @@ class _PrayerTimeItem extends StatelessWidget {
           time.substring(0, 5),
           style: AppTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w600,
-            color: isMuted ? AppColors.textHint : AppColors.textPrimary,
+            color: isMuted ? colors.textHint : colors.textPrimary,
           ),
         ),
       ],

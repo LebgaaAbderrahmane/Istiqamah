@@ -16,8 +16,8 @@ class HeatmapCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ramp = isDark ? AppColors.darkHeatmapRamp : AppColors.heatmapRamp;
+    final colors = context.appColors;
+    final ramp = colors.heatmapRamp;
     final color = ramp[bucket.clamp(0, ramp.length - 1)];
 
     return GestureDetector(
@@ -28,7 +28,7 @@ class HeatmapCell extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(AppSpacing.xxs),
           border: isToday
-              ? Border.all(color: AppColors.gold, width: 2)
+              ? Border.all(color: colors.gold, width: 2)
               : null,
         ),
       ),

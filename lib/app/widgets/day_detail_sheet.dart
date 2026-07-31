@@ -54,6 +54,7 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return FutureBuilder<List<HabitModel>>(
       future: _habitsFuture,
       builder: (context, snapshot) {
@@ -69,7 +70,7 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.textHint.withValues(alpha: 0.3),
+                    color: colors.textHint.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -82,19 +83,19 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 AppDateUtils.formatHijri(widget.day.date),
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodySmall.copyWith(color: colors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 '${widget.day.completedCount} ${AppStrings.outOf.tr} ${widget.day.totalActiveHabits} ${AppStrings.habitsCompleted.tr}',
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyMedium.copyWith(color: colors.textSecondary),
               ),
               if (_canEdit)
                 Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.xs),
                   child: Text(
                     '${AppStrings.tapToEdit.tr} (${AppStrings.dayWindow.tr})',
-                    style: AppTextStyles.labelSmall.copyWith(color: AppColors.gold),
+                    style: AppTextStyles.labelSmall.copyWith(color: colors.gold),
                   ),
                 ),
               const SizedBox(height: AppSpacing.md),
@@ -106,7 +107,7 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
                     isCompleted ? Icons.check_circle : Icons.cancel_outlined,
-                    color: isCompleted ? AppColors.accent : AppColors.textHint,
+                    color: isCompleted ? colors.accent : colors.textHint,
                   ),
                   title: Text(
                     habit.name,
@@ -116,7 +117,7 @@ class _DayDetailSheetState extends State<DayDetailSheet> {
                       ? Text(
                           '${log.value} ${habit.unit ?? ''}',
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
+                            color: colors.accent,
                           ),
                         )
                       : null,

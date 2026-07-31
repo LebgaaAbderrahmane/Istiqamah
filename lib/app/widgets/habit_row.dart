@@ -7,6 +7,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/app_spacing.dart';
 import 'streak_badge.dart';
+import 'habit_icon.dart';
 
 class HabitRow extends StatelessWidget {
   final HabitModel habit;
@@ -20,6 +21,7 @@ class HabitRow extends StatelessWidget {
     final logValue = controller.getHabitLogValue(habit.id);
     final streak = controller.getStreak(habit.id);
     final isCountType = habit.type == 'count' || habit.type == 'duration';
+    final colors = context.appColors;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
@@ -39,7 +41,7 @@ class HabitRow extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _buildIcon(habit.icon, isCompleted),
+              _buildIcon(context, habit.icon, isCompleted),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
@@ -49,7 +51,7 @@ class HabitRow extends StatelessWidget {
                       habit.name,
                       style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isCompleted ? AppColors.textHint : null,
+                        color: isCompleted ? colors.textHint : null,
                         decoration: isCompleted ? TextDecoration.lineThrough : null,
                       ),
                     ),
@@ -57,7 +59,7 @@ class HabitRow extends StatelessWidget {
                       Text(
                         '$logValue / ${habit.targetValue} ${habit.unit ?? ''}',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.accent,
+                          color: colors.accent,
                         ),
                       ),
                   ],
@@ -72,7 +74,7 @@ class HabitRow extends StatelessWidget {
                     compact: true,
                   ),
                 ),
-              _buildTrailing(habit, isCompleted, logValue),
+              _buildTrailing(context, habit, isCompleted, logValue),
             ],
           ),
         ),
@@ -80,51 +82,39 @@ class HabitRow extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon(String iconName, bool isCompleted) {
-    IconData iconData;
-    switch (iconName) {
-      case 'mosque':
-        iconData = Icons.mosque;
-        break;
-      case 'book':
-        iconData = Icons.menu_book;
-        break;
-      case 'stars':
-        iconData = Icons.stars;
-        break;
-      case 'volunteer_activism':
-        iconData = Icons.volunteer_activism;
-        break;
-      case 'nightlight':
-        iconData = Icons.nightlight;
-        break;
-      default:
-        iconData = Icons.check_circle_outline;
-    }
+  Widget _buildIcon(BuildContext context, String iconName, bool isCompleted) {
+    final colors = context.appColors;
+    final iconData = habitIconData(iconName);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xs),
       decoration: BoxDecoration(
         color: isCompleted
-            ? AppColors.accent.withValues(alpha: 0.1)
-            : AppColors.border.withValues(alpha: 0.3),
+            ? colors.accent.withValues(alpha: 0.1)
+            : colors.border.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       ),
       child: Icon(
         iconData,
         size: 24,
-        color: isCompleted ? AppColors.accent : AppColors.textHint,
+        color: isCompleted ? colors.accent : colors.textHint,
       ),
     );
   }
 
-  Widget _buildTrailing(HabitModel habit, bool isCompleted, int logValue) {
+  Widget _buildTrailing(
+    BuildContext context,
+    HabitModel habit,
+    bool isCompleted,
+    int logValue,
+  ) {
+    final colors = context.appColors;
     if (habit.type == 'boolean') {
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
         child: Icon(
           isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
           key: ValueKey(isCompleted),
-          color: isCompleted ? AppColors.accent : AppColors.border,
+          color: isCompleted ? colors.accent : colors.border,
           size: 28,
         ),
       );
@@ -132,12 +122,12 @@ class HabitRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.1),
+        color: colors.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       ),
       child: Text(
         '$logValue',
-        style: AppTextStyles.titleMedium.copyWith(color: AppColors.accent),
+        style: AppTextStyles.titleMedium.copyWith(color: colors.accent),
       ),
     );
   }
@@ -156,7 +146,7 @@ class HabitRow extends StatelessWidget {
             ),
             Text(
               '${AppStrings.dailyTarget.tr}: ${habit.targetValue} ${habit.unit ?? ''}',
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppTextStyles.bodyMedium.copyWith(color: context.appColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.lg),
             Obx(() => Row(
