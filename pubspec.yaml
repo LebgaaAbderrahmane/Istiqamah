@@ -38,14 +38,19 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "images/istiqamah_logo.png"
+  background_color: "#0D1B1E"
   min_sdk_android: 21
 
 flutter_native_splash:
   color: "#FAF7F2"
-  image: "images/istiqamah_logo.png"
+  color_dark: "#0D1B1E"
+  image: "images/istiqamah_logo_splash.png"
+  image_dark: "images/istiqamah_logo_splash.png"
   android_12:
     color: "#FAF7F2"
-    image: "images/istiqamah_logo.png"
+    color_dark: "#0D1B1E"
+    image: "images/istiqamah_logo_splash.png"
+    image_dark: "images/istiqamah_logo_splash.png"
 
 flutter:
   uses-material-design: true

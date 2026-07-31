@@ -15,7 +15,9 @@ class LocaleController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString('locale');
     if (saved != null) {
-      locale.value = Locale(saved);
+      locale.value = saved == 'ar'
+          ? const Locale('ar', 'AE')
+          : const Locale('en', 'US');
     } else {
       final device = Get.deviceLocale;
       if (device?.languageCode == 'ar') {
