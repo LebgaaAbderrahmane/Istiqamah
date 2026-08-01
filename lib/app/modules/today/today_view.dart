@@ -90,6 +90,7 @@ class TodayView extends GetView<HabitController> {
         );
       }),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'today_add_habit_fab',
         onPressed: AddHabitSheet.show,
         backgroundColor: context.appColors.accent,
         foregroundColor: Colors.white,

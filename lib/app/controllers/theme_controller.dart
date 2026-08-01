@@ -13,7 +13,7 @@ class ThemeController extends GetxController {
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final index = prefs.getInt('themeMode') ?? 2;
+    final index = prefs.getInt('themeMode') ?? 0;
     themeMode.value = ThemeMode.values[index];
   }
 
