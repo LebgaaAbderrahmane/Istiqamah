@@ -17,69 +17,71 @@ class HabitRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HabitController>();
-    final isCompleted = controller.isHabitCompletedToday(habit.id);
-    final logValue = controller.getHabitLogValue(habit.id);
-    final streak = controller.getStreak(habit.id);
-    final isCountType = habit.type == 'count' || habit.type == 'duration';
-    final colors = context.appColors;
+    return Obx(() {
+      final isCompleted = controller.isHabitCompletedToday(habit.id);
+      final logValue = controller.getHabitLogValue(habit.id);
+      final streak = controller.getStreak(habit.id);
+      final isCountType = habit.type == 'count' || habit.type == 'duration';
+      final colors = context.appColors;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        onTap: () {
-          if (isCountType) {
-            _showCountInput(context, controller);
-          } else {
-            controller.toggleHabit(habit.id);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            children: [
-              _buildIcon(context, habit.icon, isCompleted),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      habit.name,
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: isCompleted ? colors.textHint : null,
-                        decoration: isCompleted ? TextDecoration.lineThrough : null,
-                      ),
-                    ),
-                    if (isCountType && logValue > 0)
+      return Card(
+        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          onTap: () {
+            if (isCountType) {
+              _showCountInput(context, controller);
+            } else {
+              controller.toggleHabit(habit.id);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                _buildIcon(context, habit.icon, isCompleted),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        '$logValue / ${habit.targetValue} ${habit.unit ?? ''}',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: colors.accent,
+                        habit.name,
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: isCompleted ? colors.textHint : null,
+                          decoration: isCompleted ? TextDecoration.lineThrough : null,
                         ),
                       ),
-                  ],
-                ),
-              ),
-              if (streak != null)
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.xs),
-                  child: StreakBadge(
-                    currentStreak: streak.current,
-                    longestStreak: streak.longest,
-                    compact: true,
+                      if (isCountType && logValue > 0)
+                        Text(
+                          '$logValue / ${habit.targetValue} ${habit.unit ?? ''}',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: colors.accent,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-              _buildTrailing(context, habit, isCompleted, logValue),
-            ],
+                if (streak != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.xs),
+                    child: StreakBadge(
+                      currentStreak: streak.current,
+                      longestStreak: streak.longest,
+                      compact: true,
+                    ),
+                  ),
+                _buildTrailing(context, habit, isCompleted, logValue),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildIcon(BuildContext context, String iconName, bool isCompleted) {

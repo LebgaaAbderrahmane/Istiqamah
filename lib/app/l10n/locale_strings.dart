@@ -74,4 +74,6 @@ abstract class AppStrings {
   static const String sun = 'sun';
   static const String customHabitAdded = 'customHabitAdded';
   static const String error = 'error';
+  static const String dailyInspiration = 'dailyInspiration';
+  static const String todayProgress = 'todayProgress';
 }

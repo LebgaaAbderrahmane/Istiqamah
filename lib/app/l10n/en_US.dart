@@ -76,4 +76,6 @@ final Map<String, String> enUs = {
   AppStrings.sun: 'Sun',
   AppStrings.customHabitAdded: 'Custom habit added',
   AppStrings.error: 'Error',
+  AppStrings.dailyInspiration: 'Daily Inspiration',
+  AppStrings.todayProgress: "Today's Progress",
 };

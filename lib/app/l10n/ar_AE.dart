@@ -76,4 +76,6 @@ final Map<String, String> arAe = {
   AppStrings.sun: 'ح',
   AppStrings.customHabitAdded: 'تمت إضافة العادة المخصصة',
   AppStrings.error: 'خطأ',
+  AppStrings.dailyInspiration: 'قبس اليوم',
+  AppStrings.todayProgress: 'تقدم اليوم',
 };

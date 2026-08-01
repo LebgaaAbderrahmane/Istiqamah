@@ -66,6 +66,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
   );
 
+  static TextStyle labelMedium = const TextStyle(
+    fontFamily: _font,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+  );
+
   static TextStyle labelSmall = const TextStyle(
     fontFamily: _font,
     fontSize: 11,
