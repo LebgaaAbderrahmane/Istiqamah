@@ -76,4 +76,22 @@ abstract class AppStrings {
   static const String error = 'error';
   static const String dailyInspiration = 'dailyInspiration';
   static const String todayProgress = 'todayProgress';
+  static const String prayersSectionTitle = 'prayersSectionTitle';
+  static const String quranSectionTitle = 'quranSectionTitle';
+  static const String adhkarSectionTitle = 'adhkarSectionTitle';
+  static const String otherHabitsSectionTitle = 'otherHabitsSectionTitle';
+  static const String addPage = 'addPage';
+  static const String addFivePages = 'addFivePages';
+  static const String comingSoon = 'comingSoon';
+  static const String pages = 'pages';
+  static const String stats = 'stats';
+  static const String weeklyCompletion = 'weeklyCompletion';
+  static const String bestHabit = 'bestHabit';
+  static const String focusArea = 'focusArea';
+  static const String completionRate = 'completionRate';
+  static const String noStatsYet = 'noStatsYet';
+  static const String noStatsSubtitle = 'noStatsSubtitle';
+  static const String thisWeek = 'thisWeek';
+  static const String lastSevenDays = 'lastSevenDays';
+  static const String refresh = 'refresh';
 }

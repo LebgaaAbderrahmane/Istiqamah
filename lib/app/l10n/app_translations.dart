@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'en_US.dart';
-import 'ar_AE.dart';
+import 'en_us.dart';
+import 'ar_ae.dart';
 
 class AppTranslations extends Translations {
   @override

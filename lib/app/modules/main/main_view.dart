@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controllers/main_controller.dart';
 import '../../l10n/locale_strings.dart';
 import '../calendar/calendar_view.dart';
+import '../stats/stats_view.dart';
 import '../tasks/tasks_view.dart';
 import '../today/today_view.dart';
 
@@ -18,6 +19,7 @@ class MainView extends GetView<MainController> {
               TodayView(),
               CalendarView(),
               TasksView(),
+              StatsView(),
             ],
           )),
       bottomNavigationBar: Obx(() => NavigationBar(
@@ -38,6 +40,11 @@ class MainView extends GetView<MainController> {
                 icon: const Icon(Icons.checklist_outlined),
                 selectedIcon: const Icon(Icons.checklist),
                 label: AppStrings.tasks.tr,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.insights_outlined),
+                selectedIcon: const Icon(Icons.insights),
+                label: AppStrings.stats.tr,
               ),
             ],
           )),
