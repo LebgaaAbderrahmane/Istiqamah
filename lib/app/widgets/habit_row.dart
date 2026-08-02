@@ -189,6 +189,7 @@ class HabitRow extends StatelessWidget {
           ],
         ),
       ),
+      backgroundColor: context.appColors.surface,
     );
   }
 }

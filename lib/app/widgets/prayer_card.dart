@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/habit_controller.dart';
+import '../controllers/prayer_controller.dart';
 import '../controllers/rawatib_controller.dart';
 import '../data/models/habit_model.dart';
 import '../l10n/locale_strings.dart';
@@ -40,6 +41,18 @@ class PrayerCard extends StatelessWidget {
       default:
         return habit.name;
     }
+  }
+
+  String? _prayerTime() {
+    final times = Get.find<PrayerController>().prayerTimes.value;
+    if (times == null) return null;
+    final key = habit.name.toLowerCase();
+    final canonical = key.isEmpty
+        ? key
+        : key[0].toUpperCase() + key.substring(1);
+    final time = times[canonical];
+    if (time == null || time.length < 5) return null;
+    return time.substring(0, 5);
   }
 
   @override
@@ -128,6 +141,37 @@ class PrayerCard extends StatelessWidget {
                             ],
                           ),
                         ),
+                        Obx(() {
+                          final time = _prayerTime();
+                          if (time == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(
+                              start: AppSpacing.sm,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  time,
+                                  style: AppTextStyles.titleMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: isCompleted
+                                        ? colors.textHint
+                                        : colors.accent,
+                                  ),
+                                ),
+                                Text(
+                                  AppStrings.clock.tr,
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: colors.textHint,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ),
                     if (raws.isNotEmpty) ...[

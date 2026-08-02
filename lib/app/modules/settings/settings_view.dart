@@ -117,7 +117,9 @@ class SettingsView extends GetView<SettingsController> {
                 Obx(() => ListTile(
                       leading: const Icon(Icons.location_on_outlined),
                       title: Text(AppStrings.city.tr),
-                      subtitle: Text(controller.cityName.value ?? AppStrings.notSet.tr),
+                      subtitle: Text(
+                        controller.cityName.value ?? AppStrings.gpsLocation.tr,
+                      ),
                       trailing: const Icon(Icons.edit),
                       onTap: () => _showCityInput(context),
                     )),
@@ -181,6 +183,18 @@ class SettingsView extends GetView<SettingsController> {
                 hintText: AppStrings.cityHint.tr,
               ),
             ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  controller.useMyLocation();
+                  Get.back();
+                },
+                icon: const Icon(Icons.my_location),
+                label: Text(AppStrings.useMyLocation.tr),
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
@@ -197,6 +211,7 @@ class SettingsView extends GetView<SettingsController> {
           ],
         ),
       ),
+      backgroundColor: context.appColors.surface,
     );
   }
 }

@@ -52,6 +52,9 @@ abstract class AppStrings {
   static const String setCity = 'setCity';
   static const String cityName = 'cityName';
   static const String cityHint = 'cityHint';
+  static const String useMyLocation = 'useMyLocation';
+  static const String gpsLocation = 'gpsLocation';
+  static const String loadingTimes = 'loadingTimes';
   static const String ramadan = 'ramadan';
   static const String ramadanMode = 'ramadanMode';
   static const String ramadanSubtitle = 'ramadanSubtitle';
@@ -98,6 +101,7 @@ abstract class AppStrings {
   static const String rawAfter = 'rawAfter';
   static const String obligatoryPrayer = 'obligatoryPrayer';
   static const String sunnahRaw = 'sunnahRaw';
+  static const String clock = 'clock';
   static const String rakat = 'rakat';
   static const String rakats = 'rakats';
   static const String xp = 'xp';

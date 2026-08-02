@@ -44,23 +44,45 @@ class PrayerController extends GetxController {
 
   Future<void> _initLocation() async {
     try {
-      final permission = await Geolocator.checkPermission();
+      var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        final req = await Geolocator.requestPermission();
-        if (req == LocationPermission.denied) {
-          locationStatus.value = 'Location permission denied. Set city in settings.';
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          locationStatus.value =
+              'Location permission denied. Set city in settings.';
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        locationStatus.value = 'Location permanently denied. Set city in settings.';
+        locationStatus.value =
+            'Location permanently denied. Set city in settings.';
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.low),
-      );
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        locationStatus.value =
+            'Location services are off. Enable them or set a city.';
+        return;
+      }
+
+      locationStatus.value = 'Locating…';
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.low,
+            timeLimit: const Duration(seconds: 10),
+          ),
+        );
+      } catch (_) {
+        position = await Geolocator.getLastKnownPosition();
+      }
+      if (position == null) {
+        locationStatus.value =
+            'Could not get location. Enable location or set a city.';
+        return;
+      }
 
       await _fetchAndSchedule(position.latitude, position.longitude);
     } catch (e) {
@@ -68,9 +90,22 @@ class PrayerController extends GetxController {
     }
   }
 
+  Future<void> refreshByGps() => _initLocation();
+
+  Future<void> refreshTimes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final city = prefs.getString('cityName');
+    if (city != null && city.trim().isNotEmpty) {
+      await fetchByCity(city);
+    } else {
+      await refreshByGps();
+    }
+  }
+
   Future<void> fetchByCity(String city) async {
     isLoading.value = true;
     errorMessage.value = null;
+    locationStatus.value = city;
     try {
       final times = await _api.fetchPrayerTimesByCity(
         city: city,

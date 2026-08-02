@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'prayer_controller.dart';
 
 class SettingsController extends GetxController {
   final calendarPreference = 'gregorian'.obs;
@@ -48,5 +49,10 @@ class SettingsController extends GetxController {
     cityName.value = name;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('cityName', name);
+    await Get.find<PrayerController>().fetchByCity(name);
+  }
+
+  Future<void> useMyLocation() async {
+    await Get.find<PrayerController>().refreshByGps();
   }
 }

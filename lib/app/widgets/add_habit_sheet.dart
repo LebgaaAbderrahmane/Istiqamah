@@ -13,6 +13,7 @@ class AddHabitSheet {
     return Get.bottomSheet(
       const _AddHabitSheetBody(),
       isScrollControlled: true,
+      backgroundColor: Get.context!.appColors.surface,
     );
   }
 }

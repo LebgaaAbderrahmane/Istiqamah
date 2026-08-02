@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/main_controller.dart';
 import '../../l10n/locale_strings.dart';
+import '../../theme/app_colors.dart';
 import '../calendar/calendar_view.dart';
 import '../stats/stats_view.dart';
 import '../tasks/tasks_view.dart';
@@ -22,32 +23,49 @@ class MainView extends GetView<MainController> {
               StatsView(),
             ],
           )),
-      bottomNavigationBar: Obx(() => NavigationBar(
-            selectedIndex: controller.currentIndex.value,
-            onDestinationSelected: controller.changeTab,
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.today_outlined),
-                selectedIcon: const Icon(Icons.today),
-                label: AppStrings.today.tr,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.calendar_month_outlined),
-                selectedIcon: const Icon(Icons.calendar_month),
-                label: AppStrings.calendar.tr,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.checklist_outlined),
-                selectedIcon: const Icon(Icons.checklist),
-                label: AppStrings.tasks.tr,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.insights_outlined),
-                selectedIcon: const Icon(Icons.insights),
-                label: AppStrings.stats.tr,
-              ),
-            ],
-          )),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: context.appColors.surface,
+          border: Border(
+            top: BorderSide(color: context.appColors.border.withValues(alpha: 0.6)),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: context.appColors.accent.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: Obx(() => NavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              selectedIndex: controller.currentIndex.value,
+              onDestinationSelected: controller.changeTab,
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(Icons.today_outlined),
+                  selectedIcon: const Icon(Icons.today),
+                  label: AppStrings.today.tr,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  selectedIcon: const Icon(Icons.calendar_month),
+                  label: AppStrings.calendar.tr,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.checklist_outlined),
+                  selectedIcon: const Icon(Icons.checklist),
+                  label: AppStrings.tasks.tr,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.insights_outlined),
+                  selectedIcon: const Icon(Icons.insights),
+                  label: AppStrings.stats.tr,
+                ),
+              ],
+            )),
+      ),
     );
   }
 }

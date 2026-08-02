@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/models/habit_model.dart';
 import '../../controllers/habit_controller.dart';
-import '../../controllers/main_controller.dart';
 import '../../controllers/prayer_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../controllers/xp_controller.dart';
@@ -29,30 +28,32 @@ class TodayView extends GetView<HabitController> {
     final settings = Get.find<SettingsController>();
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(() {
-              final pref = settings.calendarPreference.value;
-              final today = DateTime.now();
-              final gregorian = AppDateUtils.formatGregorian(today);
-              final hijri = AppDateUtils.formatHijri(today);
-              return Text(
-                pref == 'hijri' ? hijri : gregorian,
-                style: AppTextStyles.bodySmall,
-              );
-            }),
-            Text(AppStrings.appName.tr, style: AppTextStyles.titleLarge),
-          ],
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppStrings.appName.tr, style: AppTextStyles.titleLarge),
+              Obx(() {
+                final pref = settings.calendarPreference.value;
+                final today = DateTime.now();
+                final gregorian = AppDateUtils.formatGregorian(today);
+                final hijri = AppDateUtils.formatHijri(today);
+                return Text(
+                  pref == 'hijri' ? hijri : gregorian,
+                  style: AppTextStyles.bodySmall,
+                );
+              }),
+            ],
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.calendar_month_outlined),
-            onPressed: () => Get.find<MainController>().changeTab(1),
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Get.toNamed(AppRoutes.settings),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () => Get.toNamed(AppRoutes.settings),
+            ),
           ),
         ],
       ),
@@ -71,7 +72,11 @@ class TodayView extends GetView<HabitController> {
 
         final prayerHabits = controller.habits.where((h) {
           final n = h.name.toLowerCase();
-          return n == 'fajr' || n == 'dhuhr' || n == 'asr' || n == 'maghrib' || n == 'isha';
+          return n == 'fajr' ||
+              n == 'dhuhr' ||
+              n == 'asr' ||
+              n == 'maghrib' ||
+              n == 'isha';
         }).toList();
 
         final quranHabits = controller.habits.where((h) {
@@ -81,60 +86,85 @@ class TodayView extends GetView<HabitController> {
 
         final adhkarHabits = controller.habits.where((h) {
           final n = h.name.toLowerCase();
-          return n.contains('dhikr') || n.contains('sadaqah') || n.contains('qiyam') || n.contains('fasting') || n.contains('taraweeh') || n.contains('ذكر') || n.contains('صدقة');
+          return n.contains('dhikr') ||
+              n.contains('sadaqah') ||
+              n.contains('qiyam') ||
+              n.contains('fasting') ||
+              n.contains('taraweeh') ||
+              n.contains('ذكر') ||
+              n.contains('صدقة');
         }).toList();
 
         final otherHabits = controller.habits.where((h) {
-          return !prayerHabits.contains(h) && !quranHabits.contains(h) && !adhkarHabits.contains(h);
+          return !prayerHabits.contains(h) &&
+              !quranHabits.contains(h) &&
+              !adhkarHabits.contains(h);
         }).toList();
 
         int completedCount(List<HabitModel> list) {
-          return list.where((h) => controller.isHabitCompletedToday(h.id)).length;
+          return list
+              .where((h) => controller.isHabitCompletedToday(h.id))
+              .length;
         }
 
         return RefreshIndicator(
-          onRefresh: () => controller.loadData(),
+          onRefresh: () async {
+            await controller.loadData();
+            await Get.find<PrayerController>().refreshTimes();
+          },
           child: ListView(
             padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: 80),
             children: [
               const _ProgressOverviewCard(),
               const _InspirationCard(),
               const _PrayerTimesSection(),
-              
+
               if (prayerHabits.isNotEmpty) ...[
                 SectionHeaderWidget(
                   icon: Icons.mosque_rounded,
                   title: AppStrings.prayersSectionTitle.tr,
-                  counterText: '${completedCount(prayerHabits)} / ${prayerHabits.length}',
+                  counterText:
+                      '${completedCount(prayerHabits)} / ${prayerHabits.length}',
                 ),
-                ...prayerHabits.map((h) => PrayerCard(key: ValueKey(h.id), habit: h)),
+                ...prayerHabits.map(
+                  (h) => PrayerCard(key: ValueKey(h.id), habit: h),
+                ),
               ],
 
               if (quranHabits.isNotEmpty) ...[
                 SectionHeaderWidget(
                   icon: Icons.menu_book_rounded,
                   title: AppStrings.quranSectionTitle.tr,
-                  counterText: '${completedCount(quranHabits)} / ${quranHabits.length}',
+                  counterText:
+                      '${completedCount(quranHabits)} / ${quranHabits.length}',
                 ),
-                ...quranHabits.map((h) => QuranHabitCard(key: ValueKey(h.id), habit: h)),
+                ...quranHabits.map(
+                  (h) => QuranHabitCard(key: ValueKey(h.id), habit: h),
+                ),
               ],
 
               if (adhkarHabits.isNotEmpty) ...[
                 SectionHeaderWidget(
                   icon: Icons.stars_rounded,
                   title: AppStrings.adhkarSectionTitle.tr,
-                  counterText: '${completedCount(adhkarHabits)} / ${adhkarHabits.length}',
+                  counterText:
+                      '${completedCount(adhkarHabits)} / ${adhkarHabits.length}',
                 ),
-                ...adhkarHabits.map((h) => HabitRow(key: ValueKey(h.id), habit: h)),
+                ...adhkarHabits.map(
+                  (h) => HabitRow(key: ValueKey(h.id), habit: h),
+                ),
               ],
 
               if (otherHabits.isNotEmpty) ...[
                 SectionHeaderWidget(
                   icon: Icons.extension_rounded,
                   title: AppStrings.otherHabitsSectionTitle.tr,
-                  counterText: '${completedCount(otherHabits)} / ${otherHabits.length}',
+                  counterText:
+                      '${completedCount(otherHabits)} / ${otherHabits.length}',
                 ),
-                ...otherHabits.map((h) => HabitRow(key: ValueKey(h.id), habit: h)),
+                ...otherHabits.map(
+                  (h) => HabitRow(key: ValueKey(h.id), habit: h),
+                ),
               ],
             ],
           ),
@@ -158,9 +188,65 @@ class _PrayerTimesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prayerController = Get.find<PrayerController>();
+    final colors = context.appColors;
     return Obx(() {
       final times = prayerController.prayerTimes.value;
-      if (times == null) return const SizedBox.shrink();
+      final status = prayerController.locationStatus.value;
+      final error = prayerController.errorMessage.value;
+      if (times == null) {
+        if (prayerController.isLoading.value) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  AppStrings.loadingTimes.tr,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        if (status != null || error != null) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_off_outlined,
+                  size: 16,
+                  color: colors.gold,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    status ?? error!,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      }
       return PrayerTimeRow(times: times);
     });
   }
@@ -272,7 +358,7 @@ class _ProgressOverviewCard extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
-if (maxStreak > 0) ...[
+                      if (maxStreak > 0) ...[
                         const SizedBox(height: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(

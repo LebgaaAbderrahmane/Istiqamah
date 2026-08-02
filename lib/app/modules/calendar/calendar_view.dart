@@ -149,6 +149,9 @@ class CalendarView extends GetView<CalendarController> {
 
   void _showDayDetail(DayCompletion day) {
     controller.selectDay(day);
-    Get.bottomSheet(DayDetailSheet(day: day));
+    Get.bottomSheet(
+      DayDetailSheet(day: day),
+      backgroundColor: Get.context!.appColors.surface,
+    );
   }
 }
