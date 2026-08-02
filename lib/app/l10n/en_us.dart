@@ -96,4 +96,13 @@ final Map<String, String> enUs = {
   AppStrings.thisWeek: 'This Week',
   AppStrings.lastSevenDays: 'Last 7 days',
   AppStrings.refresh: 'Refresh',
+  AppStrings.rawBefore: 'Sunnah before',
+  AppStrings.rawAfter: 'Sunnah after',
+  AppStrings.obligatoryPrayer: 'Obligatory prayer',
+  AppStrings.sunnahRaw: 'Sunnah Rawatib',
+  AppStrings.xp: 'XP',
+  AppStrings.level: 'Level',
+  AppStrings.totalXp: 'Total XP',
+  AppStrings.todayXp: 'Today XP',
+  AppStrings.xpHistory: 'XP History',
 };

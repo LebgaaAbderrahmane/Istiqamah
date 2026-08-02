@@ -96,4 +96,13 @@ final Map<String, String> arAe = {
   AppStrings.thisWeek: 'هذا الأسبوع',
   AppStrings.lastSevenDays: 'آخر ٧ أيام',
   AppStrings.refresh: 'تحديث',
+  AppStrings.rawBefore: 'سنة قبل',
+  AppStrings.rawAfter: 'سنة بعد',
+  AppStrings.obligatoryPrayer: 'الفريضة',
+  AppStrings.sunnahRaw: 'السنن الرواتب',
+  AppStrings.xp: 'خبرة',
+  AppStrings.level: 'المستوى',
+  AppStrings.totalXp: 'إجمالي النقاط',
+  AppStrings.todayXp: 'نقاط اليوم',
+  AppStrings.xpHistory: 'سجل النقاط',
 };

@@ -23,37 +23,74 @@ class DatabaseService {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE habit (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            icon TEXT NOT NULL,
-            type TEXT NOT NULL,
-            targetValue INTEGER NOT NULL,
-            unit TEXT,
-            isCustom INTEGER NOT NULL DEFAULT 0,
-            isArchived INTEGER NOT NULL DEFAULT 0,
-            sortOrder INTEGER NOT NULL,
-            createdAt TEXT NOT NULL
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE habit_log (
-            id TEXT PRIMARY KEY,
-            habitId TEXT NOT NULL,
-            date TEXT NOT NULL,
-            value INTEGER NOT NULL,
-            loggedAt TEXT NOT NULL,
-            FOREIGN KEY (habitId) REFERENCES habit(id),
-            UNIQUE(habitId, date)
-          )
-        ''');
-        await db.execute('CREATE INDEX idx_habit_log_habit_date ON habit_log(habitId, date)');
+        await _createHabitTables(db);
+        await _createRawatibTable(db);
+        await _createXpTable(db);
         await _seedDefaultHabits(db);
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await _createRawatibTable(db);
+          await _createXpTable(db);
+        }
+      },
     );
+  }
+
+  Future<void> _createHabitTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE habit (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        icon TEXT NOT NULL,
+        type TEXT NOT NULL,
+        targetValue INTEGER NOT NULL,
+        unit TEXT,
+        isCustom INTEGER NOT NULL DEFAULT 0,
+        isArchived INTEGER NOT NULL DEFAULT 0,
+        sortOrder INTEGER NOT NULL,
+        createdAt TEXT NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE habit_log (
+        id TEXT PRIMARY KEY,
+        habitId TEXT NOT NULL,
+        date TEXT NOT NULL,
+        value INTEGER NOT NULL,
+        loggedAt TEXT NOT NULL,
+        FOREIGN KEY (habitId) REFERENCES habit(id),
+        UNIQUE(habitId, date)
+      )
+    ''');
+    await db.execute('CREATE INDEX idx_habit_log_habit_date ON habit_log(habitId, date)');
+  }
+
+  Future<void> _createRawatibTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE rawatib_log (
+        prayer TEXT NOT NULL,
+        date TEXT NOT NULL,
+        slot TEXT NOT NULL,
+        value INTEGER NOT NULL,
+        loggedAt TEXT NOT NULL,
+        PRIMARY KEY (prayer, date, slot)
+      )
+    ''');
+  }
+
+  Future<void> _createXpTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE xp_log (
+        id TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        xp INTEGER NOT NULL,
+        category TEXT NOT NULL,
+        loggedAt TEXT NOT NULL
+      )
+    ''');
   }
 
   Future<void> _seedDefaultHabits(Database db) async {
@@ -104,6 +141,76 @@ class DatabaseService {
     final db = await database;
     await db.delete('habit_log', where: 'habitId = ?', whereArgs: [id]);
     await db.delete('habit', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<Map<String, int>> getRawatibForDate(DateTime date) async {
+    final db = await database;
+    final dateStr = HabitLogModel.normalizeDate(date);
+    final maps = await db.query('rawatib_log', where: 'date = ?', whereArgs: [dateStr]);
+    return {
+      for (final m in maps) '${m['prayer']}_${m['slot']}': m['value'] as int,
+    };
+  }
+
+  Future<void> upsertRawatib(String prayer, DateTime date, String slot, int value) async {
+    final db = await database;
+    final dateStr = HabitLogModel.normalizeDate(date);
+    await db.insert(
+      'rawatib_log',
+      {
+        'prayer': prayer,
+        'date': dateStr,
+        'slot': slot,
+        'value': value,
+        'loggedAt': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getXpLogs({int limit = 90}) async {
+    final db = await database;
+    return db.query('xp_log', orderBy: 'date DESC', limit: limit);
+  }
+
+  Future<int> getTotalXp() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT SUM(xp) AS total FROM xp_log');
+    if (result.isEmpty || result.first['total'] == null) return 0;
+    return (result.first['total'] as num).toInt();
+  }
+
+  Future<int> getXpForDate(DateTime date) async {
+    final db = await database;
+    final dateStr = HabitLogModel.normalizeDate(date);
+    final result = await db.rawQuery(
+      'SELECT SUM(xp) AS total FROM xp_log WHERE date = ?',
+      [dateStr],
+    );
+    if (result.isEmpty || result.first['total'] == null) return 0;
+    return (result.first['total'] as num).toInt();
+  }
+
+  Future<void> deleteXpForDate(DateTime date) async {
+    final db = await database;
+    final dateStr = HabitLogModel.normalizeDate(date);
+    await db.delete('xp_log', where: 'date = ?', whereArgs: [dateStr]);
+  }
+
+  Future<void> insertXpLog({
+    required String id,
+    required DateTime date,
+    required int xp,
+    required String category,
+  }) async {
+    final db = await database;
+    await db.insert('xp_log', {
+      'id': id,
+      'date': HabitLogModel.normalizeDate(date),
+      'xp': xp,
+      'category': category,
+      'loggedAt': DateTime.now().toIso8601String(),
+    });
   }
 
   Future<List<HabitModel>> getAllHabits({bool includeArchived = false}) async {

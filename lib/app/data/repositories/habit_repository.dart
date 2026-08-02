@@ -80,4 +80,27 @@ class HabitRepository {
     DateTime monthEnd,
   ) =>
       _db.getAllLogsGroupedByDate(monthStart, monthEnd);
+
+  Future<Map<String, int>> getRawatibForDate(DateTime date) =>
+      _db.getRawatibForDate(date);
+
+  Future<void> upsertRawatib(String prayer, DateTime date, String slot, int value) =>
+      _db.upsertRawatib(prayer, date, slot, value);
+
+  Future<int> getTotalXp() => _db.getTotalXp();
+
+  Future<int> getXpForDate(DateTime date) => _db.getXpForDate(date);
+
+  Future<void> deleteXpForDate(DateTime date) => _db.deleteXpForDate(date);
+
+  Future<List<Map<String, dynamic>>> getXpLogs({int limit = 90}) =>
+      _db.getXpLogs(limit: limit);
+
+  Future<void> insertXpLog({
+    required String id,
+    required DateTime date,
+    required int xp,
+    required String category,
+  }) =>
+      _db.insertXpLog(id: id, date: date, xp: xp, category: category);
 }

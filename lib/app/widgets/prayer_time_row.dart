@@ -32,14 +32,15 @@ class PrayerTimeRow extends StatelessWidget {
         border: Border.all(color: colors.accent.withValues(alpha: 0.15)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: prayerOrder.map((name) {
           final time = times[name];
           final isSunrise = name == 'Sunrise';
-          return _PrayerTimeItem(
-            name: nameMap[name] ?? name,
-            time: time ?? '--:--',
-            isMuted: isSunrise,
+          return Expanded(
+            child: _PrayerTimeItem(
+              name: nameMap[name] ?? name,
+              time: time ?? '--:--',
+              isMuted: isSunrise,
+            ),
           );
         }).toList(),
       ),
@@ -66,6 +67,8 @@ class _PrayerTimeItem extends StatelessWidget {
       children: [
         Text(
           name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: AppTextStyles.labelSmall.copyWith(
             color: isMuted ? colors.textHint : colors.accent,
           ),
@@ -73,6 +76,8 @@ class _PrayerTimeItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           time.substring(0, 5),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: AppTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w600,
             color: isMuted ? colors.textHint : colors.textPrimary,

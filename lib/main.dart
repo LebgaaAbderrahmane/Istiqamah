@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'app/controllers/habit_controller.dart';
 import 'app/controllers/locale_controller.dart';
+import 'app/controllers/rawatib_controller.dart';
 import 'app/controllers/settings_controller.dart';
 import 'app/controllers/stats_controller.dart';
 import 'app/controllers/theme_controller.dart';
+import 'app/controllers/xp_controller.dart';
 import 'app/l10n/app_translations.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';
@@ -18,6 +21,9 @@ void main() async {
   Get.put(LocaleController());
   Get.put(SettingsController());
   Get.put(StatsController());
+  Get.put(HabitController());
+  Get.put(RawatibController());
+  Get.put(XpController());
   runApp(const IstiqamahApp());
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/stats_controller.dart';
+import '../../controllers/xp_controller.dart';
 import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -49,6 +50,8 @@ class StatsView extends GetView<StatsController> {
                 rate: controller.overallRate,
                 colors: colors,
               ),
+              const SizedBox(height: AppSpacing.md),
+              _XpPanel(),
               const SizedBox(height: AppSpacing.md),
               if (controller.bestHabit != null) ...[
                 _BestWorstCard(
@@ -324,6 +327,137 @@ class _HabitStatRow extends StatelessWidget {
               style: AppTextStyles.labelMedium.copyWith(
                 color: colors.textSecondary,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _XpPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final xp = Get.find<XpController>();
+    final colors = context.appColors;
+    return Obx(() {
+      return Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(color: colors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.auto_graph_rounded, color: colors.accent, size: 24),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  AppStrings.xp.tr,
+                  style: AppTextStyles.titleMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${AppStrings.level.tr} ${xp.level.value}',
+                  style: AppTextStyles.labelLarge.copyWith(color: colors.accent),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _XpStat(label: AppStrings.totalXp.tr, value: '${xp.totalXp.value}'),
+                Container(width: 1, height: 36, color: colors.border),
+                _XpStat(label: AppStrings.todayXp.tr, value: '${xp.todayXpValue.value}'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: xp.levelProgress.value,
+                minHeight: 8,
+                backgroundColor: colors.border.withValues(alpha: 0.4),
+                valueColor: AlwaysStoppedAnimation<Color>(colors.accent),
+              ),
+            ),
+            if (xp.xpLogs.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                AppStrings.xpHistory.tr,
+                style: AppTextStyles.labelLarge.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              ...xp.xpLogs.take(7).map((log) => _XpHistoryRow(log: log)),
+            ],
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class _XpStat extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _XpStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    return Column(
+      children: [
+        Text(
+          value,
+          style: AppTextStyles.streakNumber.copyWith(color: colors.accent),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: AppTextStyles.labelSmall.copyWith(color: colors.textSecondary),
+        ),
+      ],
+    );
+  }
+}
+
+class _XpHistoryRow extends StatelessWidget {
+  final Map<String, dynamic> log;
+
+  const _XpHistoryRow({required this.log});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final date = DateTime.tryParse(log['date'] as String? ?? '');
+    final xpValue = (log['xp'] as num?)?.toInt() ?? 0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              date != null
+                  ? AppDateUtils.formatGregorian(date)
+                  : '—',
+              style: AppTextStyles.bodySmall.copyWith(color: colors.textSecondary),
+            ),
+          ),
+          Text(
+            '+$xpValue ${AppStrings.xp.tr}',
+            style: AppTextStyles.labelMedium.copyWith(
+              color: colors.accent,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

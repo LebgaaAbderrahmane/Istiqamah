@@ -94,4 +94,13 @@ abstract class AppStrings {
   static const String thisWeek = 'thisWeek';
   static const String lastSevenDays = 'lastSevenDays';
   static const String refresh = 'refresh';
+  static const String rawBefore = 'rawBefore';
+  static const String rawAfter = 'rawAfter';
+  static const String obligatoryPrayer = 'obligatoryPrayer';
+  static const String sunnahRaw = 'sunnahRaw';
+  static const String xp = 'xp';
+  static const String level = 'level';
+  static const String totalXp = 'totalXp';
+  static const String todayXp = 'todayXp';
+  static const String xpHistory = 'xpHistory';
 }

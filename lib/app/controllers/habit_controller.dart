@@ -7,6 +7,7 @@ import '../data/repositories/habit_repository.dart';
 import '../logic/streak_calculator.dart';
 import '../services/hijri_service.dart';
 import '../utils/date_utils.dart';
+import 'xp_controller.dart';
 
 class HabitController extends GetxController {
   final _repo = HabitRepository();
@@ -31,6 +32,9 @@ class HabitController extends GetxController {
       habits.value = await _repo.getActiveHabits();
       await _loadTodayLogs();
       await _computeStreaks();
+      if (Get.isRegistered<XpController>()) {
+        Get.find<XpController>().recompute();
+      }
     } finally {
       isLoading.value = false;
     }
@@ -115,6 +119,9 @@ class HabitController extends GetxController {
     await _repo.toggleLog(habitId, todayDate);
     await _loadTodayLogs();
     await _computeStreaks();
+    if (Get.isRegistered<XpController>()) {
+      Get.find<XpController>().recompute();
+    }
   }
 
   Future<void> updateCountHabit(String habitId, int value) async {
@@ -122,6 +129,9 @@ class HabitController extends GetxController {
     await _repo.updateLogValue(habitId, todayDate, value);
     await _loadTodayLogs();
     await _computeStreaks();
+    if (Get.isRegistered<XpController>()) {
+      Get.find<XpController>().recompute();
+    }
   }
 
   Future<void> addCustomHabit({

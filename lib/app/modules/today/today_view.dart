@@ -5,6 +5,7 @@ import '../../controllers/habit_controller.dart';
 import '../../controllers/main_controller.dart';
 import '../../controllers/prayer_controller.dart';
 import '../../controllers/settings_controller.dart';
+import '../../controllers/xp_controller.dart';
 import '../../l10n/locale_strings.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -14,6 +15,7 @@ import '../../utils/date_utils.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/add_habit_sheet.dart';
 import '../../widgets/habit_row.dart';
+import '../../widgets/prayer_card.dart';
 import '../../widgets/prayer_time_row.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/quran_habit_card.dart';
@@ -105,7 +107,7 @@ class TodayView extends GetView<HabitController> {
                   title: AppStrings.prayersSectionTitle.tr,
                   counterText: '${completedCount(prayerHabits)} / ${prayerHabits.length}',
                 ),
-                ...prayerHabits.map((h) => HabitRow(key: ValueKey(h.id), habit: h)),
+                ...prayerHabits.map((h) => PrayerCard(key: ValueKey(h.id), habit: h)),
               ],
 
               if (quranHabits.isNotEmpty) ...[
@@ -270,7 +272,7 @@ class _ProgressOverviewCard extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
-                      if (maxStreak > 0) ...[
+if (maxStreak > 0) ...[
                         const SizedBox(height: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -296,10 +298,64 @@ class _ProgressOverviewCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                      const SizedBox(height: 8),
+                      _XpChip(),
                     ],
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class _XpChip extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final xpController = Get.find<XpController>();
+    final colors = context.appColors;
+    return Obx(() {
+      final level = xpController.level.value;
+      final total = xpController.totalXp.value;
+      final progress = xpController.levelProgress.value;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.auto_graph_rounded, size: 18, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(
+              '${AppStrings.level.tr} $level',
+              style: AppTextStyles.labelMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 5,
+                  backgroundColor: Colors.white.withValues(alpha: 0.3),
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.goldLight),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$total ${AppStrings.xp.tr}',
+              style: AppTextStyles.labelSmall.copyWith(
+                color: Colors.white.withValues(alpha: 0.95),
+              ),
             ),
           ],
         ),
