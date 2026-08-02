@@ -39,10 +39,12 @@ class RawatibConfig {
   static bool isPrayer(String habitName) => _map.containsKey(habitName.toLowerCase());
 
   static String slotLabel(RawatibSlot slot, String prayerName) {
-    if (slot == RawatibSlot.before) {
-      return '${AppStrings.rawBefore.tr} ($rakatFor(prayerName, RawatibSlot.before))';
-    }
-    return '${AppStrings.rawAfter.tr} ($rakatFor(prayerName, RawatibSlot.after))';
+    final count = rakatFor(prayerName, slot);
+    final unit = count == 1 ? AppStrings.rakat.tr : AppStrings.rakats.tr;
+    final prefix = slot == RawatibSlot.before
+        ? AppStrings.rawBefore.tr
+        : AppStrings.rawAfter.tr;
+    return '$prefix · $count $unit';
   }
 
   static int rakatFor(String prayerName, RawatibSlot slot) {

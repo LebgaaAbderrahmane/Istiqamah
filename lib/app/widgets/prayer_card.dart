@@ -14,6 +14,17 @@ class PrayerCard extends StatelessWidget {
 
   const PrayerCard({super.key, required this.habit});
 
+  void _togglePrayer(
+    HabitController controller,
+    RawatibController rawController,
+    bool isCompleted,
+  ) {
+    controller.toggleHabit(habit.id);
+    if (isCompleted) {
+      rawController.resetRawatibForPrayer(habit.name.toLowerCase());
+    }
+  }
+
   String _localizedName() {
     switch (habit.name.toLowerCase()) {
       case 'fajr':
@@ -40,83 +51,101 @@ class PrayerCard extends StatelessWidget {
     final raws = RawatibConfig.rawatibFor(prayerKey);
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 4),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: 4,
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Obx(() {
         final isCompleted = controller.isHabitCompletedToday(habit.id);
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  _buildIcon(isCompleted: isCompleted),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child: Icon(
+                    Icons.mosque_rounded,
+                    size: 90,
+                    color: colors.accent.withValues(alpha: 0.04),
+                  ),
+                ),
+              ),
+            ),
+            if (isCompleted)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Container(
+                    color: colors.accent.withValues(alpha: 0.06),
+                  ),
+                ),
+              ),
+            InkWell(
+              onTap: () =>
+                  _togglePrayer(controller, rawController, isCompleted),
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Text(
-                          _localizedName(),
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: isCompleted
-                                ? colors.textHint
-                                : colors.textPrimary,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
+                        _TrailingCheck(
+                          onToggle: () => _togglePrayer(
+                            controller,
+                            rawController,
+                            isCompleted,
                           ),
+                          isCompleted: isCompleted,
                         ),
-                        Text(
-                          AppStrings.obligatoryPrayer.tr,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: colors.textHint,
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _localizedName(),
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: isCompleted
+                                      ? colors.textHint
+                                      : colors.textPrimary,
+                                  decoration: isCompleted
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                ),
+                              ),
+                              Text(
+                                AppStrings.obligatoryPrayer.tr,
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: colors.textHint,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  _TrailingCheck(
-                    onToggle: () => controller.toggleHabit(habit.id),
-                    isCompleted: isCompleted,
-                  ),
-                ],
-              ),
-              if (raws.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.sm),
-                _RawatibTiles(
-                  prayer: prayerKey,
-                  raws: raws,
-                  rawController: rawController,
-                  colors: colors,
+                    if (raws.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      _RawatibTiles(
+                        prayer: prayerKey,
+                        raws: raws,
+                        rawController: rawController,
+                        colors: colors,
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-            ],
-          ),
+              ),
+            ),
+          ],
         );
       }),
-    );
-  }
-
-  Widget _buildIcon({required bool isCompleted}) {
-    final colors = Get.context!.appColors;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xs),
-      decoration: BoxDecoration(
-        color: isCompleted
-            ? colors.accent.withValues(alpha: 0.1)
-            : colors.border.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-      ),
-      child: Icon(
-        Icons.mosque_rounded,
-        size: 24,
-        color: isCompleted ? colors.accent : colors.textHint,
-      ),
     );
   }
 }
@@ -164,17 +193,21 @@ class _RawatibTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Wrap(
-        spacing: AppSpacing.xs,
-        runSpacing: AppSpacing.xs,
-        children: raws.map((info) {
-          return _RawatibChip(
-            label: RawatibConfig.slotLabel(info.slot, prayer),
-            done: rawController.isDone(prayer, info.slot),
-            onToggle: () => rawController.toggleRawatib(prayer, info.slot),
-            colors: colors,
-          );
-        }).toList(),
+      final chips = raws.map((info) {
+        return _RawatibChip(
+          label: RawatibConfig.slotLabel(info.slot, prayer),
+          done: rawController.isDone(prayer, info.slot),
+          onToggle: () => rawController.toggleRawatib(prayer, info.slot),
+          colors: colors,
+        );
+      }).toList();
+      return Row(
+        children: [
+          for (var i = 0; i < chips.length; i++) ...[
+            if (i > 0) const SizedBox(width: AppSpacing.xs),
+            Expanded(child: chips[i]),
+          ],
+        ],
       );
     });
   }
@@ -200,7 +233,10 @@ class _RawatibChip extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: 6,
+        ),
         decoration: BoxDecoration(
           color: done
               ? colors.gold.withValues(alpha: 0.15)
@@ -212,23 +248,24 @@ class _RawatibChip extends StatelessWidget {
           ),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              done ? Icons.check_circle : Icons.radio_button_unchecked,
-              size: 16,
-              color: done ? colors.gold : colors.textHint,
-            ),
-            const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: AppTextStyles.labelSmall.copyWith(
                   color: done ? colors.gold : colors.textSecondary,
                 ),
               ),
+            ),
+            const SizedBox(width: 6),
+            Icon(
+              done ? Icons.check_circle : Icons.radio_button_unchecked,
+              size: 16,
+              color: done ? colors.gold : colors.textHint,
             ),
           ],
         ),

@@ -98,6 +98,8 @@ abstract class AppStrings {
   static const String rawAfter = 'rawAfter';
   static const String obligatoryPrayer = 'obligatoryPrayer';
   static const String sunnahRaw = 'sunnahRaw';
+  static const String rakat = 'rakat';
+  static const String rakats = 'rakats';
   static const String xp = 'xp';
   static const String level = 'level';
   static const String totalXp = 'totalXp';

@@ -100,6 +100,8 @@ final Map<String, String> arAe = {
   AppStrings.rawAfter: 'سنة بعد',
   AppStrings.obligatoryPrayer: 'الفريضة',
   AppStrings.sunnahRaw: 'السنن الرواتب',
+  AppStrings.rakat: 'ركعة',
+  AppStrings.rakats: 'ركعات',
   AppStrings.xp: 'خبرة',
   AppStrings.level: 'المستوى',
   AppStrings.totalXp: 'إجمالي النقاط',

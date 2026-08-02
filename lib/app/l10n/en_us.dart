@@ -100,6 +100,8 @@ final Map<String, String> enUs = {
   AppStrings.rawAfter: 'Sunnah after',
   AppStrings.obligatoryPrayer: 'Obligatory prayer',
   AppStrings.sunnahRaw: 'Sunnah Rawatib',
+  AppStrings.rakat: 'rakat',
+  AppStrings.rakats: 'rakats',
   AppStrings.xp: 'XP',
   AppStrings.level: 'Level',
   AppStrings.totalXp: 'Total XP',

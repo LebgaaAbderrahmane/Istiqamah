@@ -52,4 +52,17 @@ class RawatibController extends GetxController {
     todayState.value = Map.of(_today);
     update();
   }
+
+  Future<void> resetRawatibForPrayer(String prayer) async {
+    final normalized = prayer.toLowerCase();
+    final slotted = RawatibConfig.rawatibFor(normalized);
+    final date = AppDateUtils.dateOnly(today);
+    for (final info in slotted) {
+      final slot = info.slot == RawatibSlot.before ? 'before' : 'after';
+      await _repo.upsertRawatib(normalized, date, slot, 0);
+      _today.remove(_key(normalized, info.slot));
+    }
+    todayState.value = Map.of(_today);
+    update();
+  }
 }
